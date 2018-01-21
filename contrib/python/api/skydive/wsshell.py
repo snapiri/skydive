@@ -21,6 +21,7 @@
 
 import argparse
 import json
+import logging
 import os
 import sys
 
@@ -144,4 +145,7 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig()
+    WSClient.LOG.setLevel(logging.DEBUG)
+
     main()
