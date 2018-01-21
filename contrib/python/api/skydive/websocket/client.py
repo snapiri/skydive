@@ -127,6 +127,7 @@ class WSClient(WebSocketClientProtocol):
                  protocol=WSClientDefaultProtocol,
                  username="", password="", cookie=None, sync="", filter="", persistent=True,
                  **kwargs):
+        super(WSClient, self).__init__()
         self.host_id = host_id
         self.endpoint = endpoint
         self.username = username
