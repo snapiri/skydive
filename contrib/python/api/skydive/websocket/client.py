@@ -19,12 +19,18 @@
 # under the License.
 #
 
-import asyncio
+try:
+    import asyncio
+except ImportError:
+    import trollius as asyncio
 import base64
 import json
 import http.client as httplib
 import uuid
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from autobahn.asyncio.websocket import WebSocketClientProtocol
 from autobahn.asyncio.websocket import WebSocketClientFactory
