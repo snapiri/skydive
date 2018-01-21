@@ -24,6 +24,7 @@ try:
 except ImportError:
     import trollius as asyncio
 import base64
+import functools
 import json
 import http.client as httplib
 import logging
@@ -90,8 +91,14 @@ class SyncRequestMsg:
 
 class WSClientDefaultProtocol(WebSocketClientProtocol):
 
+    def debug_send(self, func, arg):
+        LOG.debug("Running func %s", func.__name__)
+        func(arg)
+
     def sendWSMessage(self, msg):
-        self.sendMessage(msg.to_json().encode())
+        self.factory.client.loop.call_soon(
+            functools.partial(self.debug_send, self.sendMessage,
+                              msg.to_json().encode()))
 
     def stop(self):
         self.factory.client.loop.stop()
@@ -124,6 +131,9 @@ class WSClientDebugProtocol(WSClientDefaultProtocol):
     def onClose(self, wasClean, code, reason):
         LOG.debug("WebSocket connection closed: %s", reason)
 
+    def sendWSMessage(self, msg):
+        LOG.debug("Sending message: %s", msg.to_json())
+        super(WSClientDebugProtocol, self).sendWSMessage(msg)
 
 class WSClient(WebSocketClientProtocol):
 
@@ -171,7 +181,8 @@ class WSClient(WebSocketClientProtocol):
         u = urlparse(self.endpoint)
 
         coro = self.loop.create_connection(factory, u.hostname, u.port)
-        self.loop.run_until_complete(coro)
+        (transport, protocol) = self.loop.run_until_complete(coro)
+        LOG.debug('transport, protocol: %r, %r', transport, protocol)
 
 
     def start(self):
