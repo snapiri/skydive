@@ -13,7 +13,7 @@ from skydive.websocket.client import NodeAddedMsgType, EdgeAddedMsgType
 class WSTestClient(WSClientDebugProtocol):
     def onOpen(self):
         self.factory.kwargs["test"](self)
-        self.stop()
+        self.stop_when_complete()
 
 
 class SkydiveWSTest(unittest.TestCase):
@@ -38,6 +38,7 @@ class SkydiveWSTest(unittest.TestCase):
                                  "ws://localhost:8082/ws/publisher",
                                  protocol=WSTestClient, test=is_connected)
         self.wsclient.connect()
+        self.wsclient.start()
 
         self.assertEqual(self.connected, True, "failed to connect")
 
@@ -76,3 +77,4 @@ class SkydiveWSTest(unittest.TestCase):
                                  "ws://localhost:8082/ws/publisher",
                                  protocol=WSTestClient, test=create_node)
         self.wsclient.connect()
+        self.wsclient.start()

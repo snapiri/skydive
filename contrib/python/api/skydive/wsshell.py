@@ -142,6 +142,7 @@ def main():
                       mode=args.mode,
                       file=file)
     client.connect()
+    client.start()
 
 
 if __name__ == '__main__':
