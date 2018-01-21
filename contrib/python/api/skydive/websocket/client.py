@@ -24,6 +24,7 @@ try:
 except ImportError:
     import trollius as asyncio
 import base64
+import functools
 import json
 import http.client as httplib
 import logging
@@ -95,6 +96,10 @@ class WSClientDefaultProtocol(WebSocketClientProtocol):
 
     def stop(self):
         self.factory.client.loop.stop()
+
+    def stop_when_complete(self):
+        self.factory.client.loop.call_soon(
+            functools.partial(self.factory.client.loop.stop))
 
 
 class WSClientDebugProtocol(WSClientDefaultProtocol):
